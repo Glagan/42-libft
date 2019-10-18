@@ -4,6 +4,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <string.h>
 #include "libft.h"
 
 void test_char_ft(int (*org)(int), int (*ft)(int)) {
@@ -62,7 +63,10 @@ int main(int argc, char const *argv[])
 		str_bzero_ft = strdup(argv[i]);
 		bzero(str_bzero_org, 5);
 		ft_bzero((void*)str_bzero_ft, 5);
-		printf("\"%s\" | \"%s\"\n", str_bzero_org, str_bzero_ft);
+		if (memcmp(str_bzero_org, str_bzero_ft, 5) == 0)
+			printf("G");
+		else
+			printf("[%s|5]", argv[i]);
 		free(str_bzero_org);
 		free(str_bzero_ft);
 		i++;
@@ -76,7 +80,6 @@ int main(int argc, char const *argv[])
 
 	ft_calloc(50, sizeof(*str_bzero_ft));
 	printf("No seg. fault ?\n");
-
 
 	/*
 	is_
@@ -239,20 +242,21 @@ int main(int argc, char const *argv[])
 	/*
 	split
 	*/
-	printf("\n---split---\n");
+	printf("\n---split (e)---\n");
 
 	i = 0;
 	while (i < argc) {
-		printf(">%s\n<", argv[i]);
+		printf(">\"%s\"\n:\"", argv[i]);
 		char **splitted = ft_split(argv[i], 'e');
 		int j = 0;
 		while (splitted[j]) {
-			printf("%s ", splitted[j]);
+			printf("%s", splitted[j]);
 			free(splitted[j]);
-			j++;
+			if (splitted[++j])
+				printf(" ");
 		}
 		free(splitted);
-		printf("\n\n");
+		printf("\"\n");
 		i++;
 	}
 
@@ -392,13 +396,28 @@ int main(int argc, char const *argv[])
 	printf("\n---strmapi---\n");
 
 	char *str_mapi_ft = NULL;
+	int j, all_upper;
 
 	i = 0;
 	while (i < argc) {
 		str_mapi_ft = ft_strmapi(argv[i], &strupper_and_one);
-		printf(">\"%s\"\n<\"%s\"\n\n", argv[i], str_mapi_ft);
+		all_upper = 1;
+		j = 0;
+		while (str_mapi_ft[j])
+		{
+			if (islower(str_mapi_ft[j++]))
+			{
+				all_upper = 0;
+				break ;
+			}
+		}
+		if ((str_mapi_ft[0] == '1' || strlen(str_mapi_ft) == 0) && all_upper)
+			printf("G");
+		else
+			printf("[%s|%s]", argv[i], str_mapi_ft);
 		i++;
 	}
+	printf("\n");
 
 	/*
 	strncmp
@@ -477,7 +496,7 @@ int main(int argc, char const *argv[])
 	i = 0;
 	while (i < argc) {
 		str_trim = ft_strtrim(argv[i], " .+-e");
-		printf(">\"%s\"\n<\"%s\"\n\n", argv[i], str_trim);
+		printf(">\"%s\"\n:\"%s\"\n", argv[i], str_trim);
 		free(str_trim);
 		i++;
 	}
@@ -488,16 +507,34 @@ int main(int argc, char const *argv[])
 	printf("\n---substr---\n");
 
 	char *str_substr = NULL;
+	char *str_substr_org = NULL;
+	int argv_length;
+
+	str_substr_org = (char*)malloc(sizeof(*str_substr_org) * 500);
 	i = 0;
 	while (i < argc) {
+		argv_length = strlen(argv[i]);
+
 		str_substr = ft_substr(argv[i], 0, 5);
-		printf(">\"%s\"\n<\"%s\"\n", argv[i], str_substr);
+		strncpy(str_substr_org, argv[i], 5);
+		if (strcmp(str_substr, str_substr_org) == 0)
+			printf("G");
+		else
+			printf("[%s|%s|%s|0|5]", argv[i], str_substr, str_substr_org);
 		free(str_substr);
+
 		str_substr = ft_substr(argv[i], 5, 5);
-		printf("<     \"%s\"\n\n", str_substr);
+		if (argv_length > 5)
+			strncpy(str_substr_org, argv[i] + 5, 5);
+		if (strcmp(str_substr, (argv_length > 5) ? str_substr_org : "") == 0)
+			printf("G");
+		else
+			printf("[%s|%s|%s|5|5]", argv[i], str_substr, str_substr_org);
 		free(str_substr);
 		i++;
 	}
+	free(str_substr_org);
+	printf("\n");
 
 	/*
 	to_
@@ -517,7 +554,7 @@ int main(int argc, char const *argv[])
 	if (fd < 0) {
 		printf("open error %d %s\n", errno, strerror(errno));
 	} else {
-		printf("Writing...\n");
+		printf("Writing... left column is expected.\n");
 		ft_putchar_fd('1', fd);
 		ft_putstr_fd("23456789", fd);
 		ft_putendl_fd("abcdef", fd);

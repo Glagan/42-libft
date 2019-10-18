@@ -10,7 +10,3 @@
 
 Exec ``./test.sh`` and ``./test_bonus.sh`` if you want.  
 Those tests don't test everything but not the same things as *war machine*.
-
-## TODO
-
-* Update ``ft_lstmap`` for *subject 10*...

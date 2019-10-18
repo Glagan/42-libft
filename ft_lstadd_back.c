@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstadd_back_bonus.c                             :+:      :+:    :+:   */
+/*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 20:13:11 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/10/09 21:41:27 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/10/18 22:56:16 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,14 @@ void
 {
 	t_list	*last;
 
-	if (*alst)
+	if (alst)
 	{
-		last = ft_lstlast(*alst);
-		last->next = new;
+		if (*alst)
+		{
+			last = ft_lstlast(*alst);
+			last->next = new;
+		}
+		else
+			*alst = new;
 	}
-	else
-		*alst = new;
 }

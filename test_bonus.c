@@ -70,7 +70,7 @@ int main(int argc, char const *argv[])
 	ft_lstiter(*list, &print_list_elt);
 	printf("\n");
 
-	t_list	*list_copy = ft_lstmap(first, &upper_lst);
+	t_list	*list_copy = ft_lstmap(first, &upper_lst, &free);
 	printf("UPPER list with lstmap\n");
 	print_list(list_copy);
 
@@ -92,6 +92,45 @@ int main(int argc, char const *argv[])
 	printf("Expect 1 element\n");
 	print_list(empty);
 	ft_lstclear(&empty, &free);
+
+	printf("Seg. fault tests (?)\n");
+	printf(":lst_addback\n");
+	ft_lstadd_back(NULL, NULL);
+	ft_lstadd_back(&empty, NULL);
+
+	printf(":lst_addfront\n");
+	ft_lstadd_front(NULL, NULL);
+	ft_lstadd_front(&empty, NULL);
+
+	printf(":lstclear\n");
+	ft_lstclear(NULL, NULL);
+	ft_lstclear(&empty, NULL);
+	ft_lstclear(&empty, NULL);
+	ft_lstclear(&empty, &free);
+
+	printf(":lstdelone\n");
+	ft_lstdelone(NULL, NULL);
+	ft_lstdelone(NULL, &free);
+	ft_lstdelone(empty, NULL);
+
+	printf(":lstiter\n");
+	ft_lstiter(NULL, NULL);
+	ft_lstiter(NULL, &print_list_elt);
+	ft_lstiter(empty, NULL);
+	ft_lstiter(empty, &print_list_elt);
+
+	printf(":lstlast\n");
+	ft_lstlast(NULL);
+	ft_lstlast(empty);
+
+	printf(":lstmap\n");
+	ft_lstmap(NULL, NULL, NULL);
+	ft_lstmap(NULL, NULL, &free);
+	ft_lstmap(NULL, &upper_lst, NULL);
+	ft_lstmap(NULL, &upper_lst, &free);
+	ft_lstmap(empty, NULL, NULL);
+	ft_lstmap(empty, &upper_lst, NULL);
+	ft_lstmap(empty, &upper_lst, &free);
 
 	return (0);
 }
