@@ -293,7 +293,7 @@ int main(int argc, char const *argv[])
 	*/
 	printf("\n---split (`e.wu-+ `)---[char|string][length|split_length|sep_count|string]\n");
 
-	char to_split[7] = {'e', '.', 'w', 'u', '-', '+', ' '};
+	char to_split[10] = {'e', '.', 'w', 'u', '-', '+', ' ', '0', '2', '1'};
 	char **splitted = NULL;
 	int	k, l;
 	int	out_length, total_length, sep_count;
@@ -301,7 +301,7 @@ int main(int argc, char const *argv[])
 	i = 0;
 	while (i < argc) {
 		k = 0;
-		while (k < 7)
+		while (k < (int)sizeof(to_split))
 		{
 			splitted = ft_split(argv[i], to_split[k]);
 			if (splitted)
