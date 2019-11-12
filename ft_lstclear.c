@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 20:18:49 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/10/18 23:02:13 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/11/12 21:10:31 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,14 @@
 void
 	ft_lstclear(t_list **lst, void (*del)(void*))
 {
-	t_list	**init;
 	t_list	*tmp;
 
-	if (!del)
+	if (!del || !lst || !*lst)
 		return ;
-	init = lst;
 	while (lst && *lst)
 	{
-		(*del)((*lst)->content);
 		tmp = (*lst)->next;
-		free(*lst);
-		(*lst) = tmp;
+		ft_lstdelone(*lst, del);
+		*lst = tmp;
 	}
-	if (init)
-		*init = NULL;
 }

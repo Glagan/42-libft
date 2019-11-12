@@ -37,6 +37,10 @@ int	max(int a, int b) {
 	return ((a > b) ? a : b);
 }
 
+int	same_sign(int a, int b) {
+	return ((a < 0 && b < 0) || (a > 0 && b > 0));
+}
+
 int	_c_in_set(char c, char const *set) {
 	int	i;
 
@@ -287,11 +291,12 @@ int main(int argc, char const *argv[])
 	/*
 	split
 	*/
-	printf("\n---split (`e.wu-+ `)---[char|string]\n");
+	printf("\n---split (`e.wu-+ `)---[char|string][length|split_length|sep_count|string]\n");
 
 	char to_split[7] = {'e', '.', 'w', 'u', '-', '+', ' '};
 	char **splitted = NULL;
-	int	k;
+	int	k, l;
+	int	out_length, total_length, sep_count;
 
 	i = 0;
 	while (i < argc) {
@@ -301,9 +306,17 @@ int main(int argc, char const *argv[])
 			splitted = ft_split(argv[i], to_split[k]);
 			if (splitted)
 			{
+				out_length = strlen(argv[i]);
+				sep_count = 0;
+				l = 0;
+				while (argv[i][l])
+					if (argv[i][l++] == to_split[k])
+						sep_count++;
+				total_length = 0;
 				j = 0;
 				while (splitted[j])
 				{
+					total_length += strlen(splitted[j]);
 					if (strchr(splitted[j], to_split[k]))
 						printf("[remaining:%c|%s]", to_split[k], splitted[j]);
 					else
@@ -312,6 +325,10 @@ int main(int argc, char const *argv[])
 					j++;
 				}
 				free(splitted);
+				if (out_length != (total_length + sep_count))
+					printf("[missing:%d|%d|%d|%s]", out_length, total_length, sep_count, argv[i]);
+				else
+					printf("G");
 			}
 			else
 				printf("[malloc:%s]", argv[i]);
@@ -484,18 +501,25 @@ int main(int argc, char const *argv[])
 	strncmp
 	*/
 	printf("\n---strncmp---[string|strncmp|yours]\n");
+	int	ncmp_ret;
+	int	nft_cmp_ret;
 
 	i = 0;
 	while (i < argc) {
-		if (strncmp(argv[i], argv[i], 50) == ft_strncmp(argv[i], argv[i], 50)) {
+		ncmp_ret = strncmp(argv[i], argv[i], 50);
+		nft_cmp_ret = ft_strncmp(argv[i], argv[i], 50);
+		if (ncmp_ret == nft_cmp_ret || same_sign(ncmp_ret, nft_cmp_ret)) {
 			printf("G");
 		} else {
-			printf("[%s|%d|%d]", argv[i], strncmp(argv[i], argv[i], 50), ft_strncmp(argv[i], argv[i], 50));
+			printf("[%s|%d|%d]", argv[i], ncmp_ret, nft_cmp_ret);
 		}
-		if (strncmp(argv[i], argv[argc - 1], 50) == ft_strncmp(argv[i], argv[argc - 1], 50)) {
+
+		ncmp_ret = strncmp(argv[i], argv[argc - 1], 50);
+		nft_cmp_ret = ft_strncmp(argv[i], argv[argc - 1], 50);
+		if (ncmp_ret == nft_cmp_ret || same_sign(ncmp_ret, nft_cmp_ret)) {
 			printf("G");
 		} else {
-			printf("[%s|%s|%d|%d]", argv[i], argv[argc - 1], strncmp(argv[i], argv[argc - 1], 50), ft_strncmp(argv[i], argv[argc - 1], 50));
+			printf("[%s|%s|%d|%d]", argv[i], argv[argc - 1], ncmp_ret, nft_cmp_ret);
 		}
 		i++;
 	}
