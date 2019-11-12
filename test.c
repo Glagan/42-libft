@@ -10,13 +10,13 @@
 void test_char_ft(int (*org)(int), int (*ft)(int)) {
 	int	i;
 
+	printf("[int|unsigned char]\n");
 	i = 0;
 	while (i < 256) {
-		if ((*org)(i) == (*ft)(i)) {
+		if ((*org)(i) == (*ft)(i))
 			printf("G");
-		} else {
+		else
 			printf("[%d|%c]", i, i);
-		}
 		i++;
 	}
 	printf("\n");
@@ -29,15 +29,34 @@ char strupper_and_one(unsigned int idx, char c) {
 	return (ft_toupper(c));
 }
 
+int	min(int a, int b) {
+	return ((a < b) ? a : b);
+}
+
+int	max(int a, int b) {
+	return ((a > b) ? a : b);
+}
+
+int	_c_in_set(char c, char const *set) {
+	int	i;
+
+	i = 0;
+	while (set[i])
+		if ((unsigned char)set[i++] == (unsigned char)c)
+			return (1);
+	return (0);
+}
+
 int main(int argc, char const *argv[])
 {
+	int	j;
 	(void) argc;
 	(void) argv;
 
 	/*
 	atoi
 	*/
-	printf("---atoi---\n");
+	printf("---atoi---[string|atoi|yours]\n");
 
 	int i = 1;
 	while (i < argc) {
@@ -53,20 +72,23 @@ int main(int argc, char const *argv[])
 	/*
 	bzero
 	*/
-	printf("\n---bzero---\n");
+	printf("\n---bzero---[string|length]\n");
 
 	char *str_bzero_org = NULL;
 	char *str_bzero_ft = NULL;
+	int	min_length;
+
 	i = 0;
 	while (i < argc) {
 		str_bzero_org = strdup(argv[i]);
 		str_bzero_ft = strdup(argv[i]);
-		bzero(str_bzero_org, 5);
-		ft_bzero((void*)str_bzero_ft, 5);
-		if (memcmp(str_bzero_org, str_bzero_ft, 5) == 0)
+		min_length = min(strlen(argv[i]), 5);
+		bzero(str_bzero_org, min_length);
+		ft_bzero((void*)str_bzero_ft, min_length);
+		if (memcmp(str_bzero_org, str_bzero_ft, min_length) == 0)
 			printf("G");
 		else
-			printf("[%s|5]", argv[i]);
+			printf("[%s|%d]", argv[i], min_length);
 		free(str_bzero_org);
 		free(str_bzero_ft);
 		i++;
@@ -76,34 +98,57 @@ int main(int argc, char const *argv[])
 	/*
 	calloc
 	*/
-	printf("\n---calloc---\n");
+	printf("\n---calloc---[string|checked|length]\n");
 
-	ft_calloc(50, sizeof(*str_bzero_ft));
-	printf("No seg. fault ?\n");
+	char	*str_calloc = NULL;
+	int		length = 0;
+
+	i = 0;
+	while (i < argc) {
+		length = strlen(argv[i]) + 1;
+		str_calloc = (char*)ft_calloc(length, sizeof(*str_calloc));
+		if (str_calloc)
+		{
+			j = 0;
+			while (j < length)
+				if (str_calloc[j++])
+					break ;
+			if (j == length)
+				printf("G");
+			else
+				printf("[content:%s:%d/%d]", argv[i], j, length);
+			free(str_calloc);
+		}
+		else
+			printf("[malloc:%s:%d]", argv[i], length);
+		str_calloc = NULL;
+		i++;
+	}
+	printf("\n");
 
 	/*
 	is_
 	*/
 
-	printf("\n---isalnum---\n");
+	printf("\n---isalnum---");
 	test_char_ft(&isalnum, &ft_isalnum);
 
-	printf("\n---isalpha---\n");
+	printf("\n---isalpha---");
 	test_char_ft(&isalpha, &ft_isalpha);
 
-	printf("\n---isascii---\n");
+	printf("\n---isascii---");
 	test_char_ft(&isascii, &ft_isascii);
 
-	printf("\n---isdigit---\n");
+	printf("\n---isdigit---");
 	test_char_ft(&isdigit, &ft_isdigit);
 
-	printf("\n---isprint---\n");
+	printf("\n---isprint---");
 	test_char_ft(&isprint, &ft_isprint);
 
 	/*
 	itoa
 	*/
-	printf("\n---itoa---\n");
+	printf("\n---itoa---[number|sprintf|yours]\n");
 
 	long	test_itoa[50] = { 0, 1, -1, 12, 21, -21, -12, 2147483999, -2147483999, 123456, -123456, 2147483648, -2147483648, 2147483647, -2147483647 };
 	i = 0;
@@ -125,7 +170,7 @@ int main(int argc, char const *argv[])
 	/*
 	memccpy
 	*/
-	printf("\n---memccpy---\n");
+	printf("\n---memccpy---[string|memccpy|yours]\n");
 
 	int memccpy_length = 0;
 	char	str_dest[250] = "";
@@ -147,7 +192,7 @@ int main(int argc, char const *argv[])
 	/*
 	memchr
 	*/
-	printf("\n---memchr---\n");
+	printf("\n---memchr---[string|memchr|yours]\n");
 
 	i = 0;
 	while (i < argc) {
@@ -163,7 +208,7 @@ int main(int argc, char const *argv[])
 	/*
 	memcmp
 	*/
-	printf("\n---memcmp---\n");
+	printf("\n---memcmp---[string|comparison|memcmp|yours]\n");
 
 	i = 0;
 	while (i < argc) {
@@ -184,7 +229,7 @@ int main(int argc, char const *argv[])
 	/*
 	memcpy
 	*/
-	printf("\n---memcpy---\n");
+	printf("\n---memcpy---[string|memcpy|yours]\n");
 
 	int memcpy_length = 0;
 	i = 0;
@@ -204,7 +249,7 @@ int main(int argc, char const *argv[])
 	/*
 	memmove
 	*/
-	printf("\n---memmove---\n");
+	printf("\n---memmove---[string|memmove|yours]\n");
 
 	int memmove_length = 0;
 	i = 0;
@@ -224,7 +269,7 @@ int main(int argc, char const *argv[])
 	/*
 	memset
 	*/
-	printf("\n---memset---\n");
+	printf("\n---memset---[char|memset|yours]\n");
 
 	i = 0;
 	while (i < argc) {
@@ -242,28 +287,44 @@ int main(int argc, char const *argv[])
 	/*
 	split
 	*/
-	printf("\n---split (e)---\n");
+	printf("\n---split (`e.wu-+ `)---[char|string]\n");
+
+	char to_split[7] = {'e', '.', 'w', 'u', '-', '+', ' '};
+	char **splitted = NULL;
+	int	k;
 
 	i = 0;
 	while (i < argc) {
-		printf(">\"%s\"\n:\"", argv[i]);
-		char **splitted = ft_split(argv[i], 'e');
-		int j = 0;
-		while (splitted[j]) {
-			printf("%s", splitted[j]);
-			free(splitted[j]);
-			if (splitted[++j])
-				printf(" ");
+		k = 0;
+		while (k < 7)
+		{
+			splitted = ft_split(argv[i], to_split[k]);
+			if (splitted)
+			{
+				j = 0;
+				while (splitted[j])
+				{
+					if (strchr(splitted[j], to_split[k]))
+						printf("[remaining:%c|%s]", to_split[k], splitted[j]);
+					else
+						printf("G");
+					free(splitted[j]);
+					j++;
+				}
+				free(splitted);
+			}
+			else
+				printf("[malloc:%s]", argv[i]);
+			k++;
 		}
-		free(splitted);
-		printf("\"\n");
 		i++;
 	}
+	printf("\n");
 
 	/*
 	strchr
 	*/
-	printf("\n---strchr---\n");
+	printf("\n---strchr---[string|strchr|yours]\n");
 
 	i = 0;
 	while (i < argc) {
@@ -279,7 +340,7 @@ int main(int argc, char const *argv[])
 	/*
 	strdup
 	*/
-	printf("\n---strdup---\n");
+	printf("\n---strdup---[string|strdup|yours]\n");
 
 	char	*str_dup_org = NULL;
 	char	*str_dup_ft = NULL;
@@ -301,7 +362,7 @@ int main(int argc, char const *argv[])
 	/*
 	strjoin
 	*/
-	printf("\n---strjoin---\n");
+	printf("\n---strjoin---[string|asprintf|yours]\n");
 
 	char	*str_join_org = NULL;
 	char	*str_join_ft = NULL;
@@ -323,7 +384,7 @@ int main(int argc, char const *argv[])
 	/*
 	strlcat
 	*/
-	printf("\n---strlcat---\n");
+	printf("\n---strlcat---[string|strlcat|yours]\n");
 
 	char str_lcat_org[2550] = "";
 	int res_org = 0;
@@ -351,7 +412,7 @@ int main(int argc, char const *argv[])
 	/*
 	strlcpy
 	*/
-	printf("\n---strlcpy---\n");
+	printf("\n---strlcpy---[string|strlcpy|yours]\n");
 
 	char str_lcpy_org[2550] = "";
 	char str_lcpy_ft[2550] = "";
@@ -377,7 +438,7 @@ int main(int argc, char const *argv[])
 	/*
 	strlen
 	*/
-	printf("\n---strlen---\n");
+	printf("\n---strlen---[string|strlen|yours]\n");
 
 	i = 0;
 	while (i < argc) {
@@ -393,10 +454,10 @@ int main(int argc, char const *argv[])
 	/*
 	strmapi
 	*/
-	printf("\n---strmapi---\n");
+	printf("\n---strmapi---[string|yours]\n");
 
 	char *str_mapi_ft = NULL;
-	int j, all_upper;
+	int all_upper;
 
 	i = 0;
 	while (i < argc) {
@@ -422,7 +483,7 @@ int main(int argc, char const *argv[])
 	/*
 	strncmp
 	*/
-	printf("\n---strncmp---\n");
+	printf("\n---strncmp---[string|strncmp|yours]\n");
 
 	i = 0;
 	while (i < argc) {
@@ -443,7 +504,7 @@ int main(int argc, char const *argv[])
 	/*
 	strnstr
 	*/
-	printf("\n---strnstr---\n");
+	printf("\n---strnstr---[string|strnstr|yours]\n");
 
 	i = 0;
 	while (i < argc) {
@@ -474,7 +535,7 @@ int main(int argc, char const *argv[])
 	/*
 	strrchr
 	*/
-	printf("\n---strrchr---\n");
+	printf("\n---strrchr---[string|strrchr|yours]\n");
 
 	i = 0;
 	while (i < argc) {
@@ -490,21 +551,43 @@ int main(int argc, char const *argv[])
 	/*
 	strtrim
 	*/
-	printf("\n---strtrim (` .+-e`)---\n");
+	printf("\n---strtrim (` .+-e`)---[where|string|yours]\n");
 
+	char set[10] = " .+-e";
 	char *str_trim = NULL;
+
 	i = 0;
 	while (i < argc) {
 		str_trim = ft_strtrim(argv[i], " .+-e");
-		printf(">\"%s\"\n:\"%s\"\n", argv[i], str_trim);
-		free(str_trim);
-		i++;
+		if (str_trim)
+		{
+			j = 0;
+			while (argv[i][j] && _c_in_set(argv[i][j], set))
+				j++;
+			if (argv[i][j] == str_trim[0])
+				printf("G");
+			else
+				printf("[start|%s|%s]", argv[i], str_trim);
+
+			j = max(0, strlen(argv[i]) - 1);
+			while (j >= 0 && _c_in_set(argv[i][j], set))
+				j--;
+			if (argv[i][j] == str_trim[max(0, strlen(str_trim) - 1)])
+				printf("G");
+			else
+				printf("[end|%s|%s]", argv[i], str_trim);
+			free(str_trim);
+			i++;
+		}
+		else
+			printf("[malloc:%s]", argv[i]);
 	}
+	printf("\n");
 
 	/*
 	substr
 	*/
-	printf("\n---substr---\n");
+	printf("\n---substr---[original|yours|strncpy|start|length]\n");
 
 	char *str_substr = NULL;
 	char *str_substr_org = NULL;
@@ -514,23 +597,27 @@ int main(int argc, char const *argv[])
 	i = 0;
 	while (i < argc) {
 		argv_length = strlen(argv[i]);
-
-		str_substr = ft_substr(argv[i], 0, 5);
-		strncpy(str_substr_org, argv[i], 5);
+		min_length = min(argv_length, 5);
+		str_substr = ft_substr(argv[i], 0, min_length);
+		strncpy(str_substr_org, argv[i], min_length);
+		str_substr_org[min_length] = 0;
 		if (strcmp(str_substr, str_substr_org) == 0)
 			printf("G");
 		else
-			printf("[%s|%s|%s|0|5]", argv[i], str_substr, str_substr_org);
+			printf("[%s|%s|%s|0|%d]", argv[i], str_substr, str_substr_org, min_length);
 		free(str_substr);
-
-		str_substr = ft_substr(argv[i], 5, 5);
-		if (argv_length > 5)
-			strncpy(str_substr_org, argv[i] + 5, 5);
-		if (strcmp(str_substr, (argv_length > 5) ? str_substr_org : "") == 0)
-			printf("G");
-		else
-			printf("[%s|%s|%s|5|5]", argv[i], str_substr, str_substr_org);
-		free(str_substr);
+		if (min_length > 5)
+		{
+			min_length = min(argv_length, 10);
+			str_substr = ft_substr(argv[i], 5, min_length);
+			strncpy(str_substr_org, argv[i] + 5, min_length);
+			str_substr_org[5 + min_length] = 0;
+			if (strcmp(str_substr, str_substr_org) == 0)
+				printf("G");
+			else
+				printf("[%s|%s|%s|5|%d]", argv[i], str_substr, str_substr_org, min_length);
+			free(str_substr);
+		}
 		i++;
 	}
 	free(str_substr_org);
@@ -539,10 +626,10 @@ int main(int argc, char const *argv[])
 	/*
 	to_
 	*/
-	printf("\n---tolower---\n");
+	printf("\n---tolower---");
 	test_char_ft(&tolower, &ft_tolower);
 
-	printf("\n---toupper---\n");
+	printf("\n---toupper---");
 	test_char_ft(&toupper, &ft_toupper);
 
 	/*
