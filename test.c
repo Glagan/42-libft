@@ -7,28 +7,6 @@
 #include <string.h>
 #include "libft.h"
 
-void test_char_ft(int (*org)(int), int (*ft)(int)) {
-	int	i;
-
-	printf("[int|unsigned char]\n");
-	i = 0;
-	while (i < 256) {
-		if ((*org)(i) == (*ft)(i))
-			printf("G");
-		else
-			printf("[%d|%c]", i, i);
-		i++;
-	}
-	printf("\n");
-}
-
-char strupper_and_one(unsigned int idx, char c) {
-	if (idx == 0) {
-		return ('1');
-	}
-	return (ft_toupper(c));
-}
-
 int	min(int a, int b) {
 	return ((a < b) ? a : b);
 }
@@ -39,6 +17,33 @@ int	max(int a, int b) {
 
 int	same_sign(int a, int b) {
 	return ((a < 0 && b < 0) || (a > 0 && b > 0));
+}
+
+void test_char_ft(int (*org)(int), int (*ft)(int)) {
+	int	i;
+	int	ret_o, ret_y;
+
+	printf("[int|unsigned char|expected|yours]\n");
+	i = 0;
+	while (i < 256) {
+		ret_o = (*org)(i);
+		ret_y = (*ft)(i);
+		if (ret_o == ret_y)
+			printf("G");
+		else if (same_sign(ret_o, ret_y))
+			printf("g");
+		else
+			printf("[%d|%c|%d|%d]", i, i, ret_o, ret_y);
+		i++;
+	}
+	printf("\n");
+}
+
+char strupper_and_one(unsigned int idx, char c) {
+	if (idx == 0) {
+		return ('1');
+	}
+	return (ft_toupper(c));
 }
 
 int	_c_in_set(char c, char const *set) {
@@ -577,12 +582,12 @@ int main(int argc, char const *argv[])
 	*/
 	printf("\n---strtrim (` .+-e`)---[where|string|yours]\n");
 
-	char set[10] = " .+-e";
+	char set[10] = " .+-e103*";
 	char *str_trim = NULL;
 
 	i = 0;
 	while (i < argc) {
-		str_trim = ft_strtrim(argv[i], " .+-e");
+		str_trim = ft_strtrim(argv[i], " .+-e10");
 		if (str_trim)
 		{
 			j = 0;
@@ -591,7 +596,7 @@ int main(int argc, char const *argv[])
 			if (argv[i][j] == str_trim[0])
 				printf("G");
 			else
-				printf("[start|%s|%s]", argv[i], str_trim);
+				printf("[start:%s|%s]", argv[i], str_trim);
 
 			j = max(0, strlen(argv[i]) - 1);
 			while (j >= 0 && _c_in_set(argv[i][j], set))
@@ -599,12 +604,48 @@ int main(int argc, char const *argv[])
 			if (argv[i][j] == str_trim[max(0, strlen(str_trim) - 1)])
 				printf("G");
 			else
-				printf("[end|%s|%s]", argv[i], str_trim);
+				printf("[end:%s|%s]", argv[i], str_trim);
 			free(str_trim);
-			i++;
 		}
 		else
 			printf("[malloc:%s]", argv[i]);
+		i++;
+	}
+	char tmp_set[2];
+	tmp_set[1] = 0;
+	int set_ct = 0;
+	while (set_ct < (int)sizeof(set))
+	{
+		tmp_set[0] = set[set_ct];
+		i = 0;
+		while (i < argc)
+		{
+			str_trim = ft_strtrim(argv[i], tmp_set);
+			if (str_trim)
+			{
+				j = 0;
+				while (argv[i][j] && _c_in_set(argv[i][j], tmp_set))
+					j++;
+				if (argv[i][j] == str_trim[0])
+					printf("G");
+				else
+					printf("[start:%s|%s]", argv[i], str_trim);
+
+				j = max(0, strlen(argv[i]) - 1);
+				while (j >= 0 && _c_in_set(argv[i][j], tmp_set))
+					j--;
+				if (argv[i][j] == str_trim[max(0, strlen(str_trim) - 1)])
+					printf("G");
+				else
+					printf("[end:%s|%s]", argv[i], str_trim);
+				free(str_trim);
+				i++;
+			}
+			else
+				printf("[malloc:%s]", argv[i]);
+			i++;
+		}
+		set_ct++;
 	}
 	printf("\n");
 
