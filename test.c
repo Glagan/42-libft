@@ -7,6 +7,52 @@
 #include <string.h>
 #include "libft.h"
 
+// https://opensource.apple.com/source/Libc/Libc-825.25/string/strlcat.c.auto.html
+size_t strlcat(char * dst, const char * src, size_t maxlen) {
+    const size_t srclen = strlen(src);
+    const size_t dstlen = strnlen(dst, maxlen);
+    if (dstlen == maxlen) return maxlen+srclen;
+    if (srclen < maxlen-dstlen) {
+        memcpy(dst+dstlen, src, srclen+1);
+    } else {
+        memcpy(dst+dstlen, src, maxlen-1);
+        dst[dstlen+maxlen-1] = '\0';
+    }
+    return dstlen + srclen;
+}
+
+// https://opensource.apple.com/source/Libc/Libc-825.25/string/strlcpy.c.auto.html
+size_t strlcpy(char * dst, const char * src, size_t maxlen) {
+    const size_t srclen = strlen(src);
+    if (srclen < maxlen) {
+        memcpy(dst, src, srclen+1);
+    } else if (maxlen != 0) {
+        memcpy(dst, src, maxlen-1);
+        dst[maxlen-1] = '\0';
+    }
+    return srclen;
+}
+
+// https://github.com/lattera/freebsd/blob/master/lib/libc/string/strnstr.c
+char *strnstr(const char *s, const char *find, size_t slen) {
+	char c, sc;
+	size_t len;
+
+	if ((c = *find++) != '\0') {
+		len = strlen(find);
+		do {
+			do {
+				if (slen-- < 1 || (sc = *s++) == '\0')
+					return (NULL);
+			} while (sc != c);
+			if (len > slen)
+				return (NULL);
+		} while (strncmp(s, find, len) != 0);
+		s--;
+	}
+	return ((char *)s);
+}
+
 int	min(int a, int b) {
 	return ((a < b) ? a : b);
 }
@@ -56,8 +102,7 @@ int	_c_in_set(char c, char const *set) {
 	return (0);
 }
 
-int main(int argc, char const *argv[])
-{
+int main(int argc, char const *argv[]) {
 	int	j;
 	(void) argc;
 	(void) argv;
@@ -386,18 +431,17 @@ int main(int argc, char const *argv[])
 	*/
 	printf("\n---strjoin---[string|asprintf|yours]\n");
 
-	char	*str_join_org = NULL;
+	char	str_join_org[1024];
 	char	*str_join_ft = NULL;
 	i = 0;
 	while (i < argc) {
-		asprintf(&str_join_org, "%s%s", argv[i], argv[0]);
+		sprintf(str_join_org, "%s%s", argv[i], argv[0]);
 		str_join_ft = ft_strjoin(argv[i], argv[0]);
 		if (strcmp(str_join_org, str_join_ft) == 0) {
 			printf("G");
 		} else {
 			printf("[%s%s|%s|%s]", argv[i], argv[0], str_join_org, str_join_ft);
 		}
-		free(str_join_org);
 		free(str_join_ft);
 		i++;
 	}
@@ -407,6 +451,7 @@ int main(int argc, char const *argv[])
 	strlcat
 	*/
 	printf("\n---strlcat---[string|strlcat|yours]\n");
+	printf("\n---Unreliable results...\n");
 
 	char str_lcat_org[2550] = "";
 	int res_org = 0;
@@ -420,12 +465,12 @@ int main(int argc, char const *argv[])
 		if (strcmp(str_lcat_org, str_lcat_ft) == 0) {
 			printf("G");
 		} else {
-			printf("[%s|%s|%s]", argv[i], str_lcat_org, str_lcat_ft);
+			printf("[bad copy|%s|%s|%s]", argv[i], str_lcat_org, str_lcat_ft);
 		}
 		if (res_org == res_ft) {
 			printf("G");
 		} else {
-			printf("[%s|%d|%d]", argv[i], res_org, res_ft);
+			printf("[bad return|%s|%d|%d]", argv[i], res_org, res_ft);
 		}
 		i++;
 	}
@@ -729,6 +774,7 @@ int main(int argc, char const *argv[])
 		ft_putchar_fd('\\', fd);
 		ft_putchar_fd('\%', fd);
 		ft_putchar_fd('$', fd);
+		ft_putchar_fd('\n', fd);
 	}
 	close(fd);
 
